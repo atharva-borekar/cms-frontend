@@ -1,5 +1,6 @@
+import "./styles.scss";
 const Footer = () => {
-  return <h1>Footer</h1>;
+  return <div className="footer">Certificate Management System </div>;
 };
 
 export default Footer;

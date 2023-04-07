@@ -1,14 +1,14 @@
-import React from "react";
 import { HOME, SIGNIN, SIGNUP } from "./routeConstants";
 import Home from "modules/Home";
 import SignIn from "modules/Auth/signIn";
 import SignUp from "modules/Auth/signUp";
+import withLayout from "HOC/withLayout";
 
 const routesConfig = [
   {
     path: HOME,
-    includeHeader: false,
-    element: <Home />,
+    includeHeader: true,
+    element: withLayout(<Home />, true),
     isProtected: false,
     key: "home",
   },

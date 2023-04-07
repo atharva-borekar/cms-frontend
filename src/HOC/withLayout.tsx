@@ -1,4 +1,5 @@
 import React from "react";
+import { Container } from "react-bootstrap";
 import { Outlet } from "react-router";
 
 import { Footer, Header } from "sharedComponents";
@@ -11,7 +12,7 @@ const withLayout = (
     <>
       {includeHeader && <Header />}
       <div className="d-flex flex-column flex-1 overflow-auto">
-        {wrappedComponent}
+        <Container>{wrappedComponent}</Container>
         <Footer />
       </div>
       <Outlet />
