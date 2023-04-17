@@ -8,6 +8,7 @@ export const useSignIn = () =>
     onSuccess: (res) => {
       toast.success("Logged In!");
       setLocalStorageData("auth_token", res.access_token);
+      setLocalStorageData("user", res.user);
     },
     onError: (err) => {},
   });
