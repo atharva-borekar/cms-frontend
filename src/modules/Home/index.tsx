@@ -4,16 +4,36 @@ import CustomTable from "sharedComponents/CustomTable";
 import CSRForm from "modules/CSR";
 import { useState } from "react";
 import { getLocalStorageData } from "utils/loalStorageUtils";
-import { useGetAllCertificates } from "customHooks/certificate.hooks";
+import {
+  useAllCertificates,
+  useExpiredCertificates,
+  useNearExpiryCertificates,
+} from "customHooks/certificate.hooks";
 
 const columns = [
-  { field: "subject" },
-  { field: "issuer" },
-  { field: "not_valid_before" },
-  { field: "not_valid_after" },
-  { field: "serial_number" },
-  { field: "signature_hash_algorithm" },
-  { field: "version" },
+  { headerName: "Subject", field: "subject", tooltipField: "subject" },
+  { headerName: "Issuer", field: "issuer", tooltipField: "issuer" },
+  {
+    headerName: "Not Valid Before",
+    field: "not_valid_before",
+    tooltipField: "not_valid_before",
+  },
+  {
+    headerName: "Not Valid After",
+    field: "not_valid_after",
+    tooltipField: "not_valid_after",
+  },
+  {
+    headerName: "Serial Number",
+    field: "serial_number",
+    tooltipField: "serial_number",
+  },
+  {
+    headerName: "Signature Hash Algorithm",
+    field: "signature_hash_algorithm",
+    tooltipField: "signature_hash_algorithm",
+  },
+  { headerName: "Version", field: "version", tooltipField: "version" },
 ];
 
 const Home = () => {
@@ -22,8 +42,10 @@ const Home = () => {
 
   const user = getLocalStorageData("user");
 
-  const { data } = useGetAllCertificates(user.id);
-  console.log({ data });
+  const { data: allCertificates } = useAllCertificates(user.id);
+  const { data: expiredCertificates } = useExpiredCertificates(user.id);
+  const { data: nearExpiryCertificates } = useNearExpiryCertificates(user.id);
+
   return (
     <div>
       <Card>
@@ -32,7 +54,12 @@ const Home = () => {
           <Button onClick={toggleCsrModal}>Create CSR</Button>
         </Card.Header>
         <Card.Body>
-          <CustomTable columns={columns} data={data} />
+          <h3>All Certificates</h3>
+          <CustomTable columns={columns} data={allCertificates} />
+          <h3>Expired Certificates</h3>
+          <CustomTable columns={columns} data={expiredCertificates} />
+          <h3>Near Expiry Certificates</h3>
+          <CustomTable columns={columns} data={nearExpiryCertificates} />
         </Card.Body>
       </Card>
       <Modal size="lg" show={openCsrModal} onHide={toggleCsrModal}>

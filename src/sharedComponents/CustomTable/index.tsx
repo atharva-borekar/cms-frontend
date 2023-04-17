@@ -9,7 +9,7 @@ const CustomTable: React.FC<ITableComponent> = ({ data, columns }) => {
     ref.current?.api.sizeColumnsToFit();
   }, []);
   return (
-    <div className="ag-theme-alpine custom-table">
+    <div className="ag-theme-alpine">
       <AgGridReact
         ref={ref}
         rowData={data}
@@ -17,6 +17,7 @@ const CustomTable: React.FC<ITableComponent> = ({ data, columns }) => {
         domLayout="autoHeight"
         autoSizePadding={20}
         onFirstDataRendered={onFirstDataRendered}
+        enableBrowserTooltips={true}
       />
     </div>
   );
