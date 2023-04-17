@@ -1,6 +1,12 @@
-import "./styles.scss";
+import { Navbar } from "react-bootstrap";
 const Footer = () => {
-  return <div className="footer">Certificate Management System </div>;
+  return (
+    <Navbar fixed="bottom">
+      <div className="w-100 d-flex justify-content-center text-secondary">
+        Certificate Management System
+      </div>
+    </Navbar>
+  );
 };
 
 export default Footer;

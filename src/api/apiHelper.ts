@@ -14,7 +14,8 @@ import { LOCAL_STORAGE_KEYS } from "../constants/index";
 
 const defaultHeaders = {
   "Content-Type": "application/json",
-  Accept: "application/json; version=1",
+  Accept: "application/json",
+  "Access-Control-Allow-Origin": "*",
 };
 
 const axiosInstance = axios.create({
@@ -124,9 +125,7 @@ axiosInstance.interceptors.response.use(
     if (error?.response?.status === 401) {
       localStorage.clear();
     }
-    toast.error(
-      `${error?.response?.data?.errors}` || "Oops, something went wrong!"
-    );
+    toast.error(error?.response?.data?.error || "Oops, something went wrong!");
     return Promise.reject(error);
   }
 );

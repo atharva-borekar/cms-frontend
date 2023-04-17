@@ -1,15 +1,15 @@
 import { HOME, SIGNIN, SIGNUP } from "./routeConstants";
 import Home from "modules/Home";
-import SignIn from "modules/Auth/signIn";
-import SignUp from "modules/Auth/signUp";
+import SignIn from "modules/Auth/SignIn";
+import SignUp from "modules/Auth/SignUp";
 import withLayout from "HOC/withLayout";
 
 const routesConfig = [
   {
     path: HOME,
     includeHeader: true,
-    element: withLayout(<Home />, true),
-    isProtected: false,
+    element: <Home />,
+    isProtected: true,
     key: "home",
   },
   {

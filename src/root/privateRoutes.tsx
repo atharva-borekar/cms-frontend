@@ -14,16 +14,7 @@ interface IRoute {
 }
 
 const PrivateRoute: React.FC<IRoute> = ({ route }) => {
-  //   const { userData: authToken } = useContext(UserContext);
-
-  //if authtoken is not present then clear localstorage and login reducer and redirect user to login page
-  //   useEffect(() => {
-  //     if (!authToken) {
-  //       localStorage.clear();
-  //       <Navigate to={LOGIN_PATH} replace={true} />;
-  //     }
-  //   }, [authToken]);
-  const authToken = getLocalStorageData("userDetails")?.auth_token;
+  const authToken = getLocalStorageData("auth_token");
 
   const finalComponent = withLayout(route.element, route.includeHeader);
   return authToken ? (
