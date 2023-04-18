@@ -2,7 +2,6 @@ import { HOME, SIGNIN, SIGNUP } from "./routeConstants";
 import Home from "modules/Home";
 import SignIn from "modules/Auth/SignIn";
 import SignUp from "modules/Auth/SignUp";
-import withLayout from "HOC/withLayout";
 
 const routesConfig = [
   {

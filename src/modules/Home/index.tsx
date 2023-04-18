@@ -9,19 +9,31 @@ import {
   useExpiredCertificates,
   useNearExpiryCertificates,
 } from "customHooks/certificate.hooks";
+import moment from "moment";
+import AddCertificateModal from "./addCertificateModal";
 
 const columns = [
-  { headerName: "Subject", field: "subject", tooltipField: "subject" },
+  {
+    headerName: "Subject",
+    field: "subject",
+    tooltipField: "subject",
+  },
   { headerName: "Issuer", field: "issuer", tooltipField: "issuer" },
   {
     headerName: "Not Valid Before",
     field: "not_valid_before",
     tooltipField: "not_valid_before",
+    valueGetter: (val: any) => {
+      return moment(val.data.not_valid_before).format("DD-MMM-YYYY (HH:MM) A");
+    },
   },
   {
     headerName: "Not Valid After",
     field: "not_valid_after",
     tooltipField: "not_valid_after",
+    valueGetter: (val: any) => {
+      return moment(val.data.not_valid_after).format("DD-MMM-YYYY (HH:MM) A");
+    },
   },
   {
     headerName: "Serial Number",
@@ -40,6 +52,9 @@ const Home = () => {
   const [openCsrModal, setOpenCsrModal] = useState(false);
   const toggleCsrModal = () => setOpenCsrModal((p) => !p);
 
+  const [openAddCertificateModal, setOpenAddCertificateModal] = useState(false);
+  const toggleAddCertificateModal = () => setOpenAddCertificateModal((p) => !p);
+
   const user = getLocalStorageData("user");
 
   const { data: allCertificates } = useAllCertificates(user.id);
@@ -51,7 +66,12 @@ const Home = () => {
       <Card>
         <Card.Header className="d-flex justify-content-between">
           <h2 className="text-primary">Certificates</h2>
-          <Button onClick={toggleCsrModal}>Create CSR</Button>
+          <div>
+            <Button className="mx-3" onClick={toggleAddCertificateModal}>
+              Add Certificate
+            </Button>
+            <Button onClick={toggleCsrModal}>Create CSR</Button>
+          </div>
         </Card.Header>
         <Card.Body>
           <h3>All Certificates</h3>
@@ -66,6 +86,16 @@ const Home = () => {
         <ModalHeader>Create CSR</ModalHeader>
         <ModalBody>
           <CSRForm />
+        </ModalBody>
+      </Modal>
+      <Modal
+        size="lg"
+        show={openAddCertificateModal}
+        onHide={toggleAddCertificateModal}
+      >
+        <ModalHeader>Add Certificate</ModalHeader>
+        <ModalBody>
+          <AddCertificateModal />
         </ModalBody>
       </Modal>
     </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 
-import { HOME, SIGNIN } from "./routeConstants";
+import { SIGNIN } from "./routeConstants";
 import { IRoutes } from "types/globalTypes";
 import routesConfig from "./routesConfig";
 import PrivateRoute from "./privateRoutes";

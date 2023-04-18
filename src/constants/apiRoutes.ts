@@ -7,4 +7,7 @@ export const API_ROUTES = {
     `/users/${userId}/get_expired_certificates`,
   getNearExpiryCertificates: (userId: string) =>
     `/users/${userId}/get_near_expiry_certificates`,
+
+  createCertificate: (userId: string) => `/users/${userId}/create_certificate`,
+  addCertificate: (userId: string) => `/users/${userId}/add_certificate`,
 };
