@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import {
   getAllCertificates,
+  getDownloadCertificate,
   getExpiredCertificates,
   getNearExpiryCertificates,
   postAddCertificate,
@@ -51,6 +52,20 @@ export const useAddCertificate = () => {
       queryClient.invalidateQueries(["allCertificates"]);
       queryClient.invalidateQueries(["expiredCertificates"]);
       queryClient.invalidateQueries(["nearExpiryCertificates"]);
+    },
+  });
+};
+
+export const useDownloadCertificate = () => {
+  return useMutation(getDownloadCertificate, {
+    onSuccess: (res: any) => {
+      const url = window.URL.createObjectURL(new Blob([res.file]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", res.file_name);
+      document.body.appendChild(link);
+      link.click();
+      window.URL.revokeObjectURL(url);
     },
   });
 };

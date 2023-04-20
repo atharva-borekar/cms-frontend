@@ -42,3 +42,14 @@ export const postAddCertificate = ({
   userId: string;
   postAddCertificatePayload: IPostAddCertificatePayload;
 }) => postApi(API_ROUTES.addCertificate(userId), postAddCertificatePayload);
+
+export const getDownloadCertificate = ({
+  userId,
+  certificateId,
+}: {
+  userId: string;
+  certificateId: string;
+}) =>
+  getApi(API_ROUTES.getDownloadCertificate(userId, certificateId), undefined, {
+    Accept: "application/x-pem-file",
+  });

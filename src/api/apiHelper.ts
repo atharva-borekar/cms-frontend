@@ -10,7 +10,6 @@ import {
   PUT_METHOD,
   PATCH_METHOD,
 } from "./constants";
-import { LOCAL_STORAGE_KEYS } from "../constants/index";
 
 const defaultHeaders = {
   "Content-Type": "application/json",
@@ -40,7 +39,8 @@ export const mockPostApi = (route: string, payload: any) =>
 //GET Method
 export async function getApi<ParamsT, ResponseT>(
   reqPath: string,
-  payload?: ParamsT
+  payload?: ParamsT,
+  headers?: any
 ): Promise<ResponseT> {
   const response = await axiosInstance.request({
     url: reqPath,
@@ -48,6 +48,7 @@ export async function getApi<ParamsT, ResponseT>(
     params: payload,
     headers: {
       ...defaultHeaders,
+      ...headers,
     },
   });
   return response.data;
@@ -107,10 +108,9 @@ export const deleteApi = async (reqPath: string, payload: object = {}) => {
 
 // adding the default query params required for all API's
 axiosInstance.interceptors.request.use((config: any) => {
-  const userInfo = getLocalStorageData(LOCAL_STORAGE_KEYS.USER_DETAILS);
   config.headers = {
     ...config.headers,
-    Authorization: userInfo?.auth_token,
+    Authorization: getLocalStorageData("auth_token"),
   };
   return config;
 });

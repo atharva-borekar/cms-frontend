@@ -2,51 +2,16 @@ import { Button, Card, Modal, ModalBody, ModalHeader } from "react-bootstrap";
 import "./home.scss";
 import CustomTable from "sharedComponents/CustomTable";
 import CSRForm from "modules/CSR";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { getLocalStorageData } from "utils/loalStorageUtils";
 import {
   useAllCertificates,
+  useDownloadCertificate,
   useExpiredCertificates,
   useNearExpiryCertificates,
 } from "customHooks/certificate.hooks";
 import moment from "moment";
 import AddCertificateModal from "./addCertificateModal";
-
-const columns = [
-  {
-    headerName: "Subject",
-    field: "subject",
-    tooltipField: "subject",
-  },
-  { headerName: "Issuer", field: "issuer", tooltipField: "issuer" },
-  {
-    headerName: "Not Valid Before",
-    field: "not_valid_before",
-    tooltipField: "not_valid_before",
-    valueGetter: (val: any) => {
-      return moment(val.data.not_valid_before).format("DD-MMM-YYYY (HH:MM) A");
-    },
-  },
-  {
-    headerName: "Not Valid After",
-    field: "not_valid_after",
-    tooltipField: "not_valid_after",
-    valueGetter: (val: any) => {
-      return moment(val.data.not_valid_after).format("DD-MMM-YYYY (HH:MM) A");
-    },
-  },
-  {
-    headerName: "Serial Number",
-    field: "serial_number",
-    tooltipField: "serial_number",
-  },
-  {
-    headerName: "Signature Hash Algorithm",
-    field: "signature_hash_algorithm",
-    tooltipField: "signature_hash_algorithm",
-  },
-  { headerName: "Version", field: "version", tooltipField: "version" },
-];
 
 const Home = () => {
   const [openCsrModal, setOpenCsrModal] = useState(false);
@@ -54,6 +19,70 @@ const Home = () => {
 
   const [openAddCertificateModal, setOpenAddCertificateModal] = useState(false);
   const toggleAddCertificateModal = () => setOpenAddCertificateModal((p) => !p);
+
+  const { mutate: downloadCertificate } = useDownloadCertificate();
+  const columns = useMemo(
+    () => [
+      {
+        headerName: "Subject",
+        field: "subject",
+        tooltipField: "subject",
+      },
+      { headerName: "Issuer", field: "issuer", tooltipField: "issuer" },
+      {
+        headerName: "Not Valid Before",
+        field: "not_valid_before",
+        tooltipField: "not_valid_before",
+        valueGetter: (val: any) => {
+          return moment(val.data.not_valid_before).format(
+            "DD-MMM-YYYY (HH:MM) A"
+          );
+        },
+      },
+      {
+        headerName: "Not Valid After",
+        field: "not_valid_after",
+        tooltipField: "not_valid_after",
+        valueGetter: (val: any) => {
+          return moment(val.data.not_valid_after).format(
+            "DD-MMM-YYYY (HH:MM) A"
+          );
+        },
+      },
+      {
+        headerName: "Serial Number",
+        field: "serial_number",
+        tooltipField: "serial_number",
+      },
+      {
+        headerName: "Signature Hash Algorithm",
+        field: "signature_hash_algorithm",
+        tooltipField: "signature_hash_algorithm",
+      },
+      { headerName: "Version", field: "version", tooltipField: "version" },
+      {
+        headerName: "Actions",
+        cellRendererFramework: (val: any) => {
+          return (
+            <Button
+              size="sm"
+              onClick={() => {
+                const userId = getLocalStorageData("user").id;
+                const certificateId = val.data.id;
+                downloadCertificate({
+                  userId,
+                  certificateId,
+                });
+              }}
+            >
+              Download
+            </Button>
+          );
+        },
+      },
+    ],
+    []
+  );
 
   const user = getLocalStorageData("user");
 

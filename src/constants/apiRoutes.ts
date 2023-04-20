@@ -10,4 +10,7 @@ export const API_ROUTES = {
 
   createCertificate: (userId: string) => `/users/${userId}/create_certificate`,
   addCertificate: (userId: string) => `/users/${userId}/add_certificate`,
+
+  getDownloadCertificate: (userId: string, certificateId: string) =>
+    `/users/${userId}/download_certificate/${certificateId}`,
 };

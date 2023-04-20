@@ -4,6 +4,7 @@ import * as yup from "yup";
 import "./signin.scss";
 import { useSignIn } from "customHooks/auth.hooks";
 import { useNavigate } from "react-router-dom";
+import anime from "animejs/lib/anime.es.js";
 
 const signInSchema = yup.object({
   username: yup.string().required("Username is required!").nonNullable(),
@@ -76,7 +77,9 @@ const SignIn = () => {
                 </Form.Control.Feedback>
               </Col>
             </Form.Group>
-            <Button onClick={() => handleSubmit()}>Sign In</Button>
+            <Button className="signin-button" onClick={() => handleSubmit()}>
+              Sign In
+            </Button>
             <span>
               Not registered? <a href="/signup">Sign Up</a>
             </span>
