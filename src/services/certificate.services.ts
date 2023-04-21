@@ -53,3 +53,12 @@ export const getDownloadCertificate = ({
   getApi(API_ROUTES.getDownloadCertificate(userId, certificateId), undefined, {
     Accept: "application/x-pem-file",
   });
+
+export const postRenewCertificate = ({
+  userId,
+  certificateId,
+}: {
+  userId: string;
+  certificateId: string;
+}) =>
+  postApi(API_ROUTES.postRenewCertificate(userId, certificateId), undefined);

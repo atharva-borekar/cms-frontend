@@ -7,6 +7,7 @@ import {
   getNearExpiryCertificates,
   postAddCertificate,
   postCreateCertificate,
+  postRenewCertificate,
 } from "services/certificate.services";
 
 export const useAllCertificates = (userId: string) =>
@@ -66,6 +67,18 @@ export const useDownloadCertificate = () => {
       document.body.appendChild(link);
       link.click();
       window.URL.revokeObjectURL(url);
+    },
+  });
+};
+
+export const useRenewCertificate = () => {
+  const queryClient = useQueryClient();
+  return useMutation(postRenewCertificate, {
+    onSuccess: (res: any) => {
+      toast.success(res.message);
+      queryClient.invalidateQueries(["allCertificates"]);
+      queryClient.invalidateQueries(["expiredCertificates"]);
+      queryClient.invalidateQueries(["nearExpiryCertificates"]);
     },
   });
 };

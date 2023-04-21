@@ -9,6 +9,7 @@ import {
   useDownloadCertificate,
   useExpiredCertificates,
   useNearExpiryCertificates,
+  useRenewCertificate,
 } from "customHooks/certificate.hooks";
 import moment from "moment";
 import AddCertificateModal from "./addCertificateModal";
@@ -21,6 +22,7 @@ const Home = () => {
   const toggleAddCertificateModal = () => setOpenAddCertificateModal((p) => !p);
 
   const { mutate: downloadCertificate } = useDownloadCertificate();
+  const { mutate: renewCertiticate } = useRenewCertificate();
   const columns = useMemo(
     () => [
       {
@@ -64,19 +66,39 @@ const Home = () => {
         headerName: "Actions",
         cellRendererFramework: (val: any) => {
           return (
-            <Button
-              size="sm"
-              onClick={() => {
-                const userId = getLocalStorageData("user").id;
-                const certificateId = val.data.id;
-                downloadCertificate({
-                  userId,
-                  certificateId,
-                });
-              }}
-            >
-              Download
-            </Button>
+            <>
+              <Button
+                className="mx-3"
+                size="sm"
+                onClick={() => {
+                  const userId = getLocalStorageData("user").id;
+                  const certificateId = val.data.id;
+                  downloadCertificate({
+                    userId,
+                    certificateId,
+                  });
+                }}
+              >
+                D
+              </Button>
+              {moment(val.data.not_valid_after) < moment() ? (
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    const userId = getLocalStorageData("user").id;
+                    const certificateId = val.data.id;
+                    renewCertiticate({
+                      userId,
+                      certificateId,
+                    });
+                  }}
+                >
+                  R
+                </Button>
+              ) : (
+                ""
+              )}
+            </>
           );
         },
       },

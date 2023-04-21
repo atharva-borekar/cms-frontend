@@ -13,4 +13,6 @@ export const API_ROUTES = {
 
   getDownloadCertificate: (userId: string, certificateId: string) =>
     `/users/${userId}/download_certificate/${certificateId}`,
+  postRenewCertificate: (userId: string, certificateId: string) =>
+    `/users/${userId}/renew_certificate/${certificateId}`,
 };
