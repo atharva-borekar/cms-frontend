@@ -15,22 +15,49 @@ import moment from "moment";
 import AddCertificateModal from "./addCertificateModal";
 
 const Home = () => {
+  const [viewCertificate, setViewCertificate] = useState<{
+    common_name?: string;
+    country?: string;
+    state?: string;
+    locality?: string;
+    email?: string;
+    organization_unit?: string;
+    organization_name?: string;
+  }>({});
+
   const [openCsrModal, setOpenCsrModal] = useState(false);
   const toggleCsrModal = () => setOpenCsrModal((p) => !p);
 
   const [openAddCertificateModal, setOpenAddCertificateModal] = useState(false);
   const toggleAddCertificateModal = () => setOpenAddCertificateModal((p) => !p);
 
+  const [openViewCertificateModal, setOpenViewCertificateModal] =
+    useState(false);
+  const toggleViewCertificateModal = () => {
+    setOpenViewCertificateModal((p) => {
+      if (p) {
+        setViewCertificate({});
+      }
+      return !p;
+    });
+  };
+
   const { mutate: downloadCertificate } = useDownloadCertificate();
   const { mutate: renewCertiticate } = useRenewCertificate();
+
   const columns = useMemo(
     () => [
       {
-        headerName: "Subject",
-        field: "subject",
-        tooltipField: "subject",
+        headerName: "Name",
+        field: "common_name",
+        wrapText: true,
+        autoHeight: true,
       },
-      { headerName: "Issuer", field: "issuer", tooltipField: "issuer" },
+      {
+        headerName: "Issuer",
+        field: "issuer_common_name",
+        tooltipField: "issuer",
+      },
       {
         headerName: "Not Valid Before",
         field: "not_valid_before",
@@ -52,17 +79,6 @@ const Home = () => {
         },
       },
       {
-        headerName: "Serial Number",
-        field: "serial_number",
-        tooltipField: "serial_number",
-      },
-      {
-        headerName: "Signature Hash Algorithm",
-        field: "signature_hash_algorithm",
-        tooltipField: "signature_hash_algorithm",
-      },
-      { headerName: "Version", field: "version", tooltipField: "version" },
-      {
         headerName: "Actions",
         cellRendererFramework: (val: any) => {
           return (
@@ -80,6 +96,16 @@ const Home = () => {
                 }}
               >
                 D
+              </Button>
+              <Button
+                className="mx-3"
+                size="sm"
+                onClick={() => {
+                  setViewCertificate(val.data);
+                  toggleViewCertificateModal();
+                }}
+              >
+                View
               </Button>
               {moment(val.data.not_valid_after) < moment() ? (
                 <Button
@@ -112,6 +138,7 @@ const Home = () => {
   const { data: expiredCertificates } = useExpiredCertificates(user.id);
   const { data: nearExpiryCertificates } = useNearExpiryCertificates(user.id);
 
+  console.log({ viewCertificate });
   return (
     <div>
       <Card>
@@ -147,6 +174,72 @@ const Home = () => {
         <ModalHeader>Add Certificate</ModalHeader>
         <ModalBody>
           <AddCertificateModal />
+        </ModalBody>
+      </Modal>
+      <Modal
+        size="lg"
+        show={openViewCertificateModal}
+        onHide={toggleViewCertificateModal}
+      >
+        <ModalHeader>View Certificate</ModalHeader>
+        <ModalBody>
+          Certificate Details:
+          <div className="d-flex flex-column">
+            {viewCertificate?.common_name && (
+              <span>Common Name: {viewCertificate.common_name}</span>
+            )}
+            {viewCertificate?.country && (
+              <span>Country: {viewCertificate.country}</span>
+            )}
+            {viewCertificate?.state && (
+              <span>State: {viewCertificate.state}</span>
+            )}
+            {viewCertificate?.locality && (
+              <span>Locality: {viewCertificate.locality}</span>
+            )}
+            {viewCertificate?.email && (
+              <span>Email: {viewCertificate.email}</span>
+            )}
+            {viewCertificate?.organization_unit && (
+              <span>
+                Organization Unit: {viewCertificate.organization_unit}
+              </span>
+            )}
+            {viewCertificate?.organization_name && (
+              <span>
+                Organization Name: {viewCertificate.organization_name}
+              </span>
+            )}
+          </div>
+          <br />
+          Issuer:
+          <div className="d-flex flex-column">
+            {viewCertificate?.common_name && (
+              <span>Common Name: {viewCertificate.common_name}</span>
+            )}
+            {viewCertificate?.country && (
+              <span>Country: {viewCertificate.country}</span>
+            )}
+            {viewCertificate?.state && (
+              <span>State: {viewCertificate.state}</span>
+            )}
+            {viewCertificate?.locality && (
+              <span>Locality: {viewCertificate.locality}</span>
+            )}
+            {viewCertificate?.email && (
+              <span>Email: {viewCertificate.email}</span>
+            )}
+            {viewCertificate?.organization_unit && (
+              <span>
+                Organization Unit: {viewCertificate.organization_unit}
+              </span>
+            )}
+            {viewCertificate?.organization_name && (
+              <span>
+                Organization Name: {viewCertificate.organization_name}
+              </span>
+            )}
+          </div>
         </ModalBody>
       </Modal>
     </div>
