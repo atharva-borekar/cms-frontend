@@ -23,6 +23,14 @@ const Home = () => {
     email?: string;
     organization_unit?: string;
     organization_name?: string;
+
+    issuer_common_name?: string;
+    issuer_country?: string;
+    issuer_state?: string;
+    issuer_locality?: string;
+    issuer_email?: string;
+    issuer_organization_unit?: string;
+    issuer_organization_name?: string;
   }>({});
 
   const [openCsrModal, setOpenCsrModal] = useState(false);
@@ -214,29 +222,29 @@ const Home = () => {
           <br />
           Issuer:
           <div className="d-flex flex-column">
-            {viewCertificate?.common_name && (
-              <span>Common Name: {viewCertificate.common_name}</span>
+            {viewCertificate?.issuer_common_name && (
+              <span>Common Name: {viewCertificate.issuer_common_name}</span>
             )}
-            {viewCertificate?.country && (
-              <span>Country: {viewCertificate.country}</span>
+            {viewCertificate?.issuer_country && (
+              <span>Country: {viewCertificate.issuer_country}</span>
             )}
-            {viewCertificate?.state && (
-              <span>State: {viewCertificate.state}</span>
+            {viewCertificate?.issuer_state && (
+              <span>State: {viewCertificate.issuer_state}</span>
             )}
-            {viewCertificate?.locality && (
-              <span>Locality: {viewCertificate.locality}</span>
+            {viewCertificate?.issuer_locality && (
+              <span>Locality: {viewCertificate.issuer_locality}</span>
             )}
-            {viewCertificate?.email && (
-              <span>Email: {viewCertificate.email}</span>
+            {viewCertificate?.issuer_email && (
+              <span>Email: {viewCertificate.issuer_email}</span>
             )}
-            {viewCertificate?.organization_unit && (
+            {viewCertificate?.issuer_organization_unit && (
               <span>
-                Organization Unit: {viewCertificate.organization_unit}
+                Organization Unit: {viewCertificate.issuer_organization_unit}
               </span>
             )}
-            {viewCertificate?.organization_name && (
+            {viewCertificate?.issuer_organization_name && (
               <span>
-                Organization Name: {viewCertificate.organization_name}
+                Organization Name: {viewCertificate.issuer_organization_name}
               </span>
             )}
           </div>
