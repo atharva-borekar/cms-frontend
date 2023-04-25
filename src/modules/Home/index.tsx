@@ -1,4 +1,11 @@
-import { Button, Card, Modal, ModalBody, ModalHeader } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  Table,
+} from "react-bootstrap";
 import "./home.scss";
 import CustomTable from "sharedComponents/CustomTable";
 import CSRForm from "modules/CSR";
@@ -13,6 +20,9 @@ import {
 } from "customHooks/certificate.hooks";
 import moment from "moment";
 import AddCertificateModal from "./addCertificateModal";
+
+import { FaEye, FaDownload } from "react-icons/fa";
+import { BiRefresh } from "react-icons/bi";
 
 const Home = () => {
   const [viewCertificate, setViewCertificate] = useState<{
@@ -71,7 +81,7 @@ const Home = () => {
         field: "not_valid_before",
         tooltipField: "not_valid_before",
         valueGetter: (val: any) => {
-          return moment(val.data.not_valid_before).format(
+          return moment(val.data?.not_valid_before).format(
             "DD-MMM-YYYY (HH:MM) A"
           );
         },
@@ -81,7 +91,7 @@ const Home = () => {
         field: "not_valid_after",
         tooltipField: "not_valid_after",
         valueGetter: (val: any) => {
-          return moment(val.data.not_valid_after).format(
+          return moment(val.data?.not_valid_after).format(
             "DD-MMM-YYYY (HH:MM) A"
           );
         },
@@ -95,15 +105,16 @@ const Home = () => {
                 className="mx-3"
                 size="sm"
                 onClick={() => {
-                  const userId = getLocalStorageData("user").id;
-                  const certificateId = val.data.id;
+                  const userId = getLocalStorageData("user")?.id;
+                  const certificateId = val.data?.id;
                   downloadCertificate({
                     userId,
                     certificateId,
                   });
                 }}
+                title="Download"
               >
-                D
+                <FaDownload />
               </Button>
               <Button
                 className="mx-3"
@@ -112,22 +123,24 @@ const Home = () => {
                   setViewCertificate(val.data);
                   toggleViewCertificateModal();
                 }}
+                title="View"
               >
-                View
+                <FaEye />
               </Button>
               {moment(val.data.not_valid_after) < moment() ? (
                 <Button
                   size="sm"
                   onClick={() => {
-                    const userId = getLocalStorageData("user").id;
-                    const certificateId = val.data.id;
+                    const userId = getLocalStorageData("user")?.id;
+                    const certificateId = val.data?.id;
                     renewCertiticate({
                       userId,
                       certificateId,
                     });
                   }}
+                  title="Renew"
                 >
-                  R
+                  <BiRefresh />
                 </Button>
               ) : (
                 ""
@@ -146,7 +159,6 @@ const Home = () => {
   const { data: expiredCertificates } = useExpiredCertificates(user.id);
   const { data: nearExpiryCertificates } = useNearExpiryCertificates(user.id);
 
-  console.log({ viewCertificate });
   return (
     <div>
       <Card>
@@ -159,7 +171,7 @@ const Home = () => {
             <Button onClick={toggleCsrModal}>Create CSR</Button>
           </div>
         </Card.Header>
-        <Card.Body>
+        <Card.Body className="w-100">
           <h3>All Certificates</h3>
           <CustomTable columns={columns} data={allCertificates} />
           <h3>Expired Certificates</h3>
@@ -168,14 +180,14 @@ const Home = () => {
           <CustomTable columns={columns} data={nearExpiryCertificates} />
         </Card.Body>
       </Card>
-      <Modal size="lg" show={openCsrModal} onHide={toggleCsrModal}>
+      <Modal size="xl" show={openCsrModal} onHide={toggleCsrModal}>
         <ModalHeader>Create CSR</ModalHeader>
         <ModalBody>
           <CSRForm />
         </ModalBody>
       </Modal>
       <Modal
-        size="lg"
+        size="xl"
         show={openAddCertificateModal}
         onHide={toggleAddCertificateModal}
       >
@@ -185,69 +197,134 @@ const Home = () => {
         </ModalBody>
       </Modal>
       <Modal
-        size="lg"
+        size="xl"
         show={openViewCertificateModal}
         onHide={toggleViewCertificateModal}
       >
         <ModalHeader>View Certificate</ModalHeader>
         <ModalBody>
-          Certificate Details:
-          <div className="d-flex flex-column">
-            {viewCertificate?.common_name && (
-              <span>Common Name: {viewCertificate.common_name}</span>
-            )}
-            {viewCertificate?.country && (
-              <span>Country: {viewCertificate.country}</span>
-            )}
-            {viewCertificate?.state && (
-              <span>State: {viewCertificate.state}</span>
-            )}
-            {viewCertificate?.locality && (
-              <span>Locality: {viewCertificate.locality}</span>
-            )}
-            {viewCertificate?.email && (
-              <span>Email: {viewCertificate.email}</span>
-            )}
-            {viewCertificate?.organization_unit && (
-              <span>
-                Organization Unit: {viewCertificate.organization_unit}
-              </span>
-            )}
-            {viewCertificate?.organization_name && (
-              <span>
-                Organization Name: {viewCertificate.organization_name}
-              </span>
-            )}
-          </div>
+          <Card>
+            <Card.Header>Certificate</Card.Header>
+            <Card.Body className="d-flex flex-column">
+              <Table
+                responsive
+                variant="dark"
+                striped
+                hover
+                bordered
+                cellPadding={5}
+              >
+                <thead>
+                  <tr>
+                    <th>Attribute</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {viewCertificate?.common_name && (
+                    <tr>
+                      <td>Common Name</td>
+                      <td>{viewCertificate.common_name}</td>
+                    </tr>
+                  )}
+                  {viewCertificate?.country && (
+                    <tr>
+                      <td>Country</td> <td>{viewCertificate.country}</td>
+                    </tr>
+                  )}
+                  {viewCertificate?.state && (
+                    <tr>
+                      <td>State</td> <td>{viewCertificate.state}</td>
+                    </tr>
+                  )}
+                  {viewCertificate?.locality && (
+                    <tr>
+                      <td>Locality</td> <td>{viewCertificate.locality}</td>
+                    </tr>
+                  )}
+                  {viewCertificate?.email && (
+                    <tr>
+                      <td>Email</td> <td>{viewCertificate.email}</td>
+                    </tr>
+                  )}
+                  {viewCertificate?.organization_unit && (
+                    <tr>
+                      <td>Organization Unit</td>
+                      <td>{viewCertificate.organization_unit}</td>
+                    </tr>
+                  )}
+                  {viewCertificate?.organization_name && (
+                    <tr>
+                      <td>Organization Name</td>
+                      <td>{viewCertificate.organization_name}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </Card.Body>
+          </Card>
           <br />
-          Issuer:
-          <div className="d-flex flex-column">
-            {viewCertificate?.issuer_common_name && (
-              <span>Common Name: {viewCertificate.issuer_common_name}</span>
-            )}
-            {viewCertificate?.issuer_country && (
-              <span>Country: {viewCertificate.issuer_country}</span>
-            )}
-            {viewCertificate?.issuer_state && (
-              <span>State: {viewCertificate.issuer_state}</span>
-            )}
-            {viewCertificate?.issuer_locality && (
-              <span>Locality: {viewCertificate.issuer_locality}</span>
-            )}
-            {viewCertificate?.issuer_email && (
-              <span>Email: {viewCertificate.issuer_email}</span>
-            )}
-            {viewCertificate?.issuer_organization_unit && (
-              <span>
-                Organization Unit: {viewCertificate.issuer_organization_unit}
-              </span>
-            )}
-            {viewCertificate?.issuer_organization_name && (
-              <span>
-                Organization Name: {viewCertificate.issuer_organization_name}
-              </span>
-            )}
-          </div>
+          <Card>
+            <Card.Header>Issuer</Card.Header>
+            <Card.Body className="d-flex flex-column">
+              <Table
+                responsive
+                variant="dark"
+                striped
+                hover
+                bordered
+                cellPadding={5}
+              >
+                <thead>
+                  <tr>
+                    <th>Attribute</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {viewCertificate?.issuer_common_name && (
+                    <tr>
+                      <td>Common Name</td>
+                      <td>{viewCertificate.issuer_common_name}</td>
+                    </tr>
+                  )}
+                  {viewCertificate?.issuer_country && (
+                    <tr>
+                      <td>Country</td> <td>{viewCertificate.issuer_country}</td>
+                    </tr>
+                  )}
+                  {viewCertificate?.issuer_state && (
+                    <tr>
+                      <td>State</td> <td>{viewCertificate.issuer_state}</td>
+                    </tr>
+                  )}
+                  {viewCertificate?.issuer_locality && (
+                    <tr>
+                      <td>Locality</td>
+                      <td>{viewCertificate.issuer_locality}</td>
+                    </tr>
+                  )}
+                  {viewCertificate?.issuer_email && (
+                    <tr>
+                      <td>Email</td> <td>{viewCertificate.issuer_email}</td>
+                    </tr>
+                  )}
+                  {viewCertificate?.issuer_organization_unit && (
+                    <tr>
+                      <td>Organization Unit</td>
+                      <td>{viewCertificate.issuer_organization_unit}</td>
+                    </tr>
+                  )}
+                  {viewCertificate?.issuer_organization_name && (
+                    <tr>
+                      <td>Organization Name</td>
+                      <td>{viewCertificate.issuer_organization_name}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </Card.Body>
+          </Card>
         </ModalBody>
       </Modal>
     </div>
