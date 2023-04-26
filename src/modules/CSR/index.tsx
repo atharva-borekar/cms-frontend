@@ -1,4 +1,7 @@
-import { useCreateCertificate } from "customHooks/certificate.hooks";
+import {
+  useCreateCertificate,
+  useGenerateCsr,
+} from "customHooks/certificate.hooks";
 import { useFormik } from "formik";
 import { Button } from "react-bootstrap";
 import CustomFormField from "sharedComponents/formField";
@@ -16,25 +19,32 @@ const csrSchema = yup.object({
   locality: yup.string().required("Locality is required!"),
 });
 
-const CSRForm = () => {
+interface ICSRFormProps {
+  isCsr?: boolean;
+}
+
+const CSRForm = (props: ICSRFormProps) => {
+  const { isCsr } = props;
   const { id: userId } = getLocalStorageData("user");
   const { mutate: createCertificate } = useCreateCertificate();
+  const { mutate: generateCsr } = useGenerateCsr();
   const { handleSubmit, values, setFieldValue, errors } = useFormik({
     initialValues: {
-      name: "",
-      country: "",
-      state: "",
-      email: "",
-      common_name: "",
-      organization_unit: "",
-      organization_name: "",
-      locality: "",
+      name: "New Cert",
+      country: "IN",
+      state: "Maharashtra",
+      email: "cms@josh.com",
+      common_name: "CMS",
+      organization_unit: "POC",
+      organization_name: "Josh Software Pvt. Ltd.",
+      locality: "Pune",
     },
     onSubmit: (values) => {
-      const postCreateCertificatePayload = {
+      const certificatePayload = {
         certificate: values,
       };
-      createCertificate({ userId, postCreateCertificatePayload });
+      if (isCsr) generateCsr({ certificatePayload });
+      else createCertificate({ userId, certificatePayload });
     },
     validationSchema: csrSchema,
   });

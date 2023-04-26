@@ -1,9 +1,12 @@
 import {
   Button,
   Card,
+  Col,
+  Form,
   Modal,
   ModalBody,
   ModalHeader,
+  Row,
   Table,
 } from "react-bootstrap";
 import "./home.scss";
@@ -21,11 +24,12 @@ import {
 import moment from "moment";
 import AddCertificateModal from "./addCertificateModal";
 
-import { FaEye, FaDownload } from "react-icons/fa";
+import { FaEye, FaDownload, FaFileSignature } from "react-icons/fa";
 import { BiRefresh } from "react-icons/bi";
 
 const Home = () => {
   const [viewCertificate, setViewCertificate] = useState<{
+    certificate?: string;
     common_name?: string;
     country?: string;
     state?: string;
@@ -43,8 +47,19 @@ const Home = () => {
     issuer_organization_name?: string;
   }>({});
 
+  const [csrModalType, setCsrModalType] = useState("");
+
   const [openCsrModal, setOpenCsrModal] = useState(false);
-  const toggleCsrModal = () => setOpenCsrModal((p) => !p);
+  const toggleCsrModal = (certificateType: string) => {
+    setOpenCsrModal((p) => {
+      if (p) {
+        setCsrModalType("");
+      } else {
+        setCsrModalType(certificateType);
+      }
+      return !p;
+    });
+  };
 
   const [openAddCertificateModal, setOpenAddCertificateModal] = useState(false);
   const toggleAddCertificateModal = () => setOpenAddCertificateModal((p) => !p);
@@ -70,6 +85,15 @@ const Home = () => {
         field: "common_name",
         wrapText: true,
         autoHeight: true,
+      },
+      {
+        headerName: "Type",
+        field: "certificate_type",
+        wrapText: true,
+        autoHeight: true,
+        cellRendererFramework: (val: any) => {
+          return val?.data?.certificate_type?.toUpperCase();
+        },
       },
       {
         headerName: "Issuer",
@@ -98,6 +122,7 @@ const Home = () => {
       },
       {
         headerName: "Actions",
+        minWidth: 300,
         cellRendererFramework: (val: any) => {
           return (
             <>
@@ -114,7 +139,7 @@ const Home = () => {
                 }}
                 title="Download"
               >
-                <FaDownload />
+                <FaDownload size={15} />
               </Button>
               <Button
                 className="mx-3"
@@ -125,10 +150,11 @@ const Home = () => {
                 }}
                 title="View"
               >
-                <FaEye />
+                <FaEye size={15} />
               </Button>
               {moment(val.data.not_valid_after) < moment() ? (
                 <Button
+                  className="mx-3"
                   size="sm"
                   onClick={() => {
                     const userId = getLocalStorageData("user")?.id;
@@ -140,7 +166,27 @@ const Home = () => {
                   }}
                   title="Renew"
                 >
-                  <BiRefresh />
+                  <BiRefresh size={20} />
+                </Button>
+              ) : (
+                ""
+              )}
+              {val?.data?.certificate_type !== "certificate" ? (
+                <Button
+                  className="mx-3"
+                  size="sm"
+                  onClick={() => {
+                    // const userId = getLocalStorageData("user")?.id;
+                    // const certificateId = val.data?.id;
+                    // renewCertiticate({
+                    //   userId,
+                    //   certificateId,
+                    // });
+                    window.alert(`Sign Certificate ${val?.data?.id}`);
+                  }}
+                  title="Sign CSR"
+                >
+                  <FaFileSignature size={20} />
                 </Button>
               ) : (
                 ""
@@ -165,10 +211,18 @@ const Home = () => {
         <Card.Header className="d-flex justify-content-between">
           <h2 className="text-primary">Certificates</h2>
           <div>
-            <Button className="mx-3" onClick={toggleAddCertificateModal}>
+            <Button className="mx-2" onClick={() => toggleCsrModal("csr")}>
+              Generate CSR
+            </Button>
+            <Button className="mx-2" onClick={toggleAddCertificateModal}>
               Add Certificate
             </Button>
-            <Button onClick={toggleCsrModal}>Create CSR</Button>
+            <Button
+              className="mx-2"
+              onClick={() => toggleCsrModal("certificate")}
+            >
+              Create Certificate
+            </Button>
           </div>
         </Card.Header>
         <Card.Body className="w-100">
@@ -180,10 +234,12 @@ const Home = () => {
           <CustomTable columns={columns} data={nearExpiryCertificates} />
         </Card.Body>
       </Card>
-      <Modal size="xl" show={openCsrModal} onHide={toggleCsrModal}>
-        <ModalHeader>Create CSR</ModalHeader>
+      <Modal size="xl" show={openCsrModal} onHide={() => toggleCsrModal("")}>
+        <ModalHeader>
+          {csrModalType === "csr" ? "Generate CSR" : "Create Certificate"}{" "}
+        </ModalHeader>
         <ModalBody>
-          <CSRForm />
+          <CSRForm isCsr={csrModalType === "csr"} />
         </ModalBody>
       </Modal>
       <Modal
@@ -203,128 +259,143 @@ const Home = () => {
       >
         <ModalHeader>View Certificate</ModalHeader>
         <ModalBody>
-          <Card>
-            <Card.Header>Certificate</Card.Header>
-            <Card.Body className="d-flex flex-column">
-              <Table
-                responsive
-                variant="dark"
-                striped
-                hover
-                bordered
-                cellPadding={5}
-              >
-                <thead>
-                  <tr>
-                    <th>Attribute</th>
-                    <th>Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {viewCertificate?.common_name && (
-                    <tr>
-                      <td>Common Name</td>
-                      <td>{viewCertificate.common_name}</td>
-                    </tr>
-                  )}
-                  {viewCertificate?.country && (
-                    <tr>
-                      <td>Country</td> <td>{viewCertificate.country}</td>
-                    </tr>
-                  )}
-                  {viewCertificate?.state && (
-                    <tr>
-                      <td>State</td> <td>{viewCertificate.state}</td>
-                    </tr>
-                  )}
-                  {viewCertificate?.locality && (
-                    <tr>
-                      <td>Locality</td> <td>{viewCertificate.locality}</td>
-                    </tr>
-                  )}
-                  {viewCertificate?.email && (
-                    <tr>
-                      <td>Email</td> <td>{viewCertificate.email}</td>
-                    </tr>
-                  )}
-                  {viewCertificate?.organization_unit && (
-                    <tr>
-                      <td>Organization Unit</td>
-                      <td>{viewCertificate.organization_unit}</td>
-                    </tr>
-                  )}
-                  {viewCertificate?.organization_name && (
-                    <tr>
-                      <td>Organization Name</td>
-                      <td>{viewCertificate.organization_name}</td>
-                    </tr>
-                  )}
-                </tbody>
-              </Table>
-            </Card.Body>
-          </Card>
+          <Row>
+            <Col>
+              <Card>
+                <Card.Header>Certificate</Card.Header>
+                <Card.Body className="d-flex flex-column">
+                  <Table
+                    responsive
+                    variant="dark"
+                    striped
+                    hover
+                    bordered
+                    cellPadding={5}
+                  >
+                    <thead>
+                      <tr>
+                        <th>Attribute</th>
+                        <th>Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {viewCertificate?.common_name && (
+                        <tr>
+                          <td>Common Name</td>
+                          <td>{viewCertificate.common_name}</td>
+                        </tr>
+                      )}
+                      {viewCertificate?.country && (
+                        <tr>
+                          <td>Country</td> <td>{viewCertificate.country}</td>
+                        </tr>
+                      )}
+                      {viewCertificate?.state && (
+                        <tr>
+                          <td>State</td> <td>{viewCertificate.state}</td>
+                        </tr>
+                      )}
+                      {viewCertificate?.locality && (
+                        <tr>
+                          <td>Locality</td> <td>{viewCertificate.locality}</td>
+                        </tr>
+                      )}
+                      {viewCertificate?.email && (
+                        <tr>
+                          <td>Email</td> <td>{viewCertificate.email}</td>
+                        </tr>
+                      )}
+                      {viewCertificate?.organization_unit && (
+                        <tr>
+                          <td>Organization Unit</td>
+                          <td>{viewCertificate.organization_unit}</td>
+                        </tr>
+                      )}
+                      {viewCertificate?.organization_name && (
+                        <tr>
+                          <td>Organization Name</td>
+                          <td>{viewCertificate.organization_name}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </Table>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col>
+              <Card>
+                <Card.Header>Issuer</Card.Header>
+                <Card.Body className="d-flex flex-column">
+                  <Table
+                    responsive
+                    variant="dark"
+                    striped
+                    hover
+                    bordered
+                    cellPadding={5}
+                  >
+                    <thead>
+                      <tr>
+                        <th>Attribute</th>
+                        <th>Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {viewCertificate?.issuer_common_name && (
+                        <tr>
+                          <td>Common Name</td>
+                          <td>{viewCertificate.issuer_common_name}</td>
+                        </tr>
+                      )}
+                      {viewCertificate?.issuer_country && (
+                        <tr>
+                          <td>Country</td>{" "}
+                          <td>{viewCertificate.issuer_country}</td>
+                        </tr>
+                      )}
+                      {viewCertificate?.issuer_state && (
+                        <tr>
+                          <td>State</td> <td>{viewCertificate.issuer_state}</td>
+                        </tr>
+                      )}
+                      {viewCertificate?.issuer_locality && (
+                        <tr>
+                          <td>Locality</td>
+                          <td>{viewCertificate.issuer_locality}</td>
+                        </tr>
+                      )}
+                      {viewCertificate?.issuer_email && (
+                        <tr>
+                          <td>Email</td> <td>{viewCertificate.issuer_email}</td>
+                        </tr>
+                      )}
+                      {viewCertificate?.issuer_organization_unit && (
+                        <tr>
+                          <td>Organization Unit</td>
+                          <td>{viewCertificate.issuer_organization_unit}</td>
+                        </tr>
+                      )}
+                      {viewCertificate?.issuer_organization_name && (
+                        <tr>
+                          <td>Organization Name</td>
+                          <td>{viewCertificate.issuer_organization_name}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </Table>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
           <br />
-          <Card>
-            <Card.Header>Issuer</Card.Header>
-            <Card.Body className="d-flex flex-column">
-              <Table
-                responsive
-                variant="dark"
-                striped
-                hover
-                bordered
-                cellPadding={5}
-              >
-                <thead>
-                  <tr>
-                    <th>Attribute</th>
-                    <th>Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {viewCertificate?.issuer_common_name && (
-                    <tr>
-                      <td>Common Name</td>
-                      <td>{viewCertificate.issuer_common_name}</td>
-                    </tr>
-                  )}
-                  {viewCertificate?.issuer_country && (
-                    <tr>
-                      <td>Country</td> <td>{viewCertificate.issuer_country}</td>
-                    </tr>
-                  )}
-                  {viewCertificate?.issuer_state && (
-                    <tr>
-                      <td>State</td> <td>{viewCertificate.issuer_state}</td>
-                    </tr>
-                  )}
-                  {viewCertificate?.issuer_locality && (
-                    <tr>
-                      <td>Locality</td>
-                      <td>{viewCertificate.issuer_locality}</td>
-                    </tr>
-                  )}
-                  {viewCertificate?.issuer_email && (
-                    <tr>
-                      <td>Email</td> <td>{viewCertificate.issuer_email}</td>
-                    </tr>
-                  )}
-                  {viewCertificate?.issuer_organization_unit && (
-                    <tr>
-                      <td>Organization Unit</td>
-                      <td>{viewCertificate.issuer_organization_unit}</td>
-                    </tr>
-                  )}
-                  {viewCertificate?.issuer_organization_name && (
-                    <tr>
-                      <td>Organization Name</td>
-                      <td>{viewCertificate.issuer_organization_name}</td>
-                    </tr>
-                  )}
-                </tbody>
-              </Table>
-            </Card.Body>
-          </Card>
+
+          <Form.Control
+            type="text"
+            as="textarea"
+            readOnly
+            value={viewCertificate.certificate}
+            rows={16}
+          />
         </ModalBody>
       </Modal>
     </div>

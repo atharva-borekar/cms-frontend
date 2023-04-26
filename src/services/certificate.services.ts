@@ -28,12 +28,11 @@ export const getNearExpiryCertificates = (userId: string) =>
 
 export const postCreateCertificate = ({
   userId,
-  postCreateCertificatePayload,
+  certificatePayload,
 }: {
   userId: string;
-  postCreateCertificatePayload: IPostCreateCertificatePayload;
-}) =>
-  postApi(API_ROUTES.createCertificate(userId), postCreateCertificatePayload);
+  certificatePayload: IPostCreateCertificatePayload;
+}) => postApi(API_ROUTES.createCertificate(userId), certificatePayload);
 
 export const postAddCertificate = ({
   userId,
@@ -62,3 +61,9 @@ export const postRenewCertificate = ({
   certificateId: string;
 }) =>
   postApi(API_ROUTES.postRenewCertificate(userId, certificateId), undefined);
+
+export const postGenerateCsr = ({
+  certificatePayload,
+}: {
+  certificatePayload: IPostCreateCertificatePayload;
+}) => postApi(API_ROUTES.GENERATE_CSR, certificatePayload);

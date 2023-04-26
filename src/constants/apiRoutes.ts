@@ -15,4 +15,5 @@ export const API_ROUTES = {
     `/users/${userId}/download_certificate/${certificateId}`,
   postRenewCertificate: (userId: string, certificateId: string) =>
     `/users/${userId}/renew_certificate/${certificateId}`,
+  GENERATE_CSR: "/generate_csr",
 };

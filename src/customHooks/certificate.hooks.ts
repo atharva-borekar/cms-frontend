@@ -7,6 +7,7 @@ import {
   getNearExpiryCertificates,
   postAddCertificate,
   postCreateCertificate,
+  postGenerateCsr,
   postRenewCertificate,
 } from "services/certificate.services";
 
@@ -36,6 +37,18 @@ export const useNearExpiryCertificates = (userId: string) =>
 export const useCreateCertificate = () => {
   const queryClient = useQueryClient();
   return useMutation(postCreateCertificate, {
+    onSuccess: (res) => {
+      toast.success(res.message);
+      queryClient.invalidateQueries(["allCertificates"]);
+      queryClient.invalidateQueries(["expiredCertificates"]);
+      queryClient.invalidateQueries(["nearExpiryCertificates"]);
+    },
+  });
+};
+
+export const useGenerateCsr = () => {
+  const queryClient = useQueryClient();
+  return useMutation(postGenerateCsr, {
     onSuccess: (res) => {
       toast.success(res.message);
       queryClient.invalidateQueries(["allCertificates"]);
