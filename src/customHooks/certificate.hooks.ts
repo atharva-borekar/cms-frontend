@@ -13,7 +13,7 @@ import {
 
 export const useAllCertificates = (userId: string) =>
   useQuery(["allCertificates", userId], () => getAllCertificates(userId), {
-    select: (res: any) => res?.data,
+    select: (res: any) => res,
   });
 
 export const useExpiredCertificates = (userId: string) =>

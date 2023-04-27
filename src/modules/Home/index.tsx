@@ -26,6 +26,7 @@ import AddCertificateModal from "./addCertificateModal";
 
 import { FaEye, FaDownload, FaFileSignature } from "react-icons/fa";
 import { BiRefresh } from "react-icons/bi";
+import Insights from "./insights";
 
 const Home = () => {
   const [viewCertificate, setViewCertificate] = useState<{
@@ -176,12 +177,6 @@ const Home = () => {
                   className="mx-3"
                   size="sm"
                   onClick={() => {
-                    // const userId = getLocalStorageData("user")?.id;
-                    // const certificateId = val.data?.id;
-                    // renewCertiticate({
-                    //   userId,
-                    //   certificateId,
-                    // });
                     window.alert(`Sign Certificate ${val?.data?.id}`);
                   }}
                   title="Sign CSR"
@@ -207,33 +202,57 @@ const Home = () => {
 
   return (
     <div>
-      <Card>
-        <Card.Header className="d-flex justify-content-between">
-          <h2 className="text-primary">Certificates</h2>
-          <div>
-            <Button className="mx-2" onClick={() => toggleCsrModal("csr")}>
-              Generate CSR
-            </Button>
-            <Button className="mx-2" onClick={toggleAddCertificateModal}>
-              Add Certificate
-            </Button>
-            <Button
-              className="mx-2"
-              onClick={() => toggleCsrModal("certificate")}
-            >
-              Create Certificate
-            </Button>
-          </div>
-        </Card.Header>
-        <Card.Body className="w-100">
-          <h3>All Certificates</h3>
-          <CustomTable columns={columns} data={allCertificates} />
-          <h3>Expired Certificates</h3>
-          <CustomTable columns={columns} data={expiredCertificates} />
-          <h3>Near Expiry Certificates</h3>
-          <CustomTable columns={columns} data={nearExpiryCertificates} />
-        </Card.Body>
-      </Card>
+      <Insights
+        lengthAll={allCertificates?.length}
+        lengthCertificates={allCertificates?.length_certificates}
+        lengthCsr={allCertificates?.length_csr}
+        lengthExpired={expiredCertificates?.length}
+        lengthNearExpiry={nearExpiryCertificates?.length}
+      />
+      <Card.Header className="d-flex justify-content-between">
+        <h2 className="text-primary">Certificates</h2>
+        <div>
+          <Button className="mx-2" onClick={() => toggleCsrModal("csr")}>
+            Generate CSR
+          </Button>
+          <Button className="mx-2" onClick={toggleAddCertificateModal}>
+            Add Certificate
+          </Button>
+          <Button
+            className="mx-2"
+            onClick={() => toggleCsrModal("certificate")}
+          >
+            Create Certificate
+          </Button>
+        </div>
+      </Card.Header>
+      <Card.Body className="w-100">
+        <section id="all" className="my-3">
+          <Card>
+            <Card.Header as="h3">All Certificates</Card.Header>
+            <Card.Body>
+              <CustomTable columns={columns} data={allCertificates?.data} />
+            </Card.Body>
+          </Card>
+        </section>
+        <section id="expired" className="my-3">
+          <Card>
+            <Card.Header as="h3">Expired Certificates</Card.Header>
+            <Card.Body>
+              <CustomTable columns={columns} data={expiredCertificates} />
+            </Card.Body>
+          </Card>
+        </section>
+        <section id="near_expiry" className="my-3">
+          <Card>
+            <Card.Header as="h3">Near Expiry Certificates</Card.Header>
+            <Card.Body>
+              <CustomTable columns={columns} data={nearExpiryCertificates} />
+            </Card.Body>
+          </Card>
+        </section>
+      </Card.Body>
+
       <Modal size="xl" show={openCsrModal} onHide={() => toggleCsrModal("")}>
         <ModalHeader>
           {csrModalType === "csr" ? "Generate CSR" : "Create Certificate"}{" "}
