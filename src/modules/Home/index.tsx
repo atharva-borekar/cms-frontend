@@ -19,6 +19,7 @@ import { getLocalStorageData } from "utils/loalStorageUtils";
 import {
   useAllCertificates,
   useDownloadCertificate,
+  useDownloadPrivateKey,
   useExpiredCertificates,
   useNearExpiryCertificates,
   useRenewCertificate,
@@ -32,6 +33,7 @@ import Insights from "./insights";
 
 const Home = () => {
   const [viewCertificate, setViewCertificate] = useState<{
+    id?: string | number;
     certificate?: string;
     common_name?: string;
     country?: string;
@@ -213,6 +215,20 @@ const Home = () => {
   };
 
   const [password, setPassword] = useState("");
+  const { id: userId } = getLocalStorageData("user");
+  const certificateId = viewCertificate.id;
+  const postDownloadPrivateKeyPayload = {
+    password,
+  };
+  const { mutate: downloadPrivateKey } = useDownloadPrivateKey();
+  const handledownloadPrivateKey = () => {
+    if (userId && certificateId && password)
+      downloadPrivateKey({
+        userId,
+        certificateId,
+        postDownloadPrivateKeyPayload,
+      });
+  };
   const downloadPrivateKeyPopover = (
     <Popover id="popover-basic">
       <Popover.Header as="h3">Enter Account Password</Popover.Header>
@@ -222,7 +238,13 @@ const Home = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
       </Popover.Body>
-      <Button className="mx-3 mb-3">Submit</Button>
+      <Button
+        disabled={password.length < 1}
+        className="mx-3 mb-3"
+        onClick={handledownloadPrivateKey}
+      >
+        Submit
+      </Button>
     </Popover>
   );
 

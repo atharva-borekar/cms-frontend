@@ -7,6 +7,7 @@ import {
   getNearExpiryCertificates,
   postAddCertificate,
   postCreateCertificate,
+  postDownloadPrivateKey,
   postGenerateCsr,
   postRenewCertificate,
 } from "services/certificate.services";
@@ -92,6 +93,20 @@ export const useRenewCertificate = () => {
       queryClient.invalidateQueries(["allCertificates"]);
       queryClient.invalidateQueries(["expiredCertificates"]);
       queryClient.invalidateQueries(["nearExpiryCertificates"]);
+    },
+  });
+};
+
+export const useDownloadPrivateKey = () => {
+  return useMutation(postDownloadPrivateKey, {
+    onSuccess: (res: any) => {
+      const url = window.URL.createObjectURL(new Blob([res?.file]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", res?.file_name ?? "download.pem");
+      document.body.appendChild(link);
+      link.click();
+      window.URL.revokeObjectURL(url);
     },
   });
 };

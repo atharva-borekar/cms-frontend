@@ -67,3 +67,19 @@ export const postGenerateCsr = ({
 }: {
   certificatePayload: IPostCreateCertificatePayload;
 }) => postApi(API_ROUTES.GENERATE_CSR, certificatePayload);
+
+export const postDownloadPrivateKey = ({
+  userId,
+  certificateId,
+  postDownloadPrivateKeyPayload,
+}: {
+  userId: string;
+  certificateId: string | number;
+  postDownloadPrivateKeyPayload: {
+    password: string;
+  };
+}) =>
+  postApi(
+    API_ROUTES.postDownloadPrivateKey(userId, certificateId),
+    postDownloadPrivateKeyPayload
+  );
