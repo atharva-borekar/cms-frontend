@@ -19,7 +19,7 @@ const InsightCard = (props: IInsightCardProps) => {
   const { title, value, color, link } = props;
   return (
     <Card onClick={() => window.location.replace(`home#${link}`)}>
-      <Card.Header as="h5" className={`bg-${color}`}>
+      <Card.Header as="h5" className={`bg-${color} text-light`}>
         {title}
       </Card.Header>
       <Card.Body>

@@ -6,6 +6,8 @@ import {
   Modal,
   ModalBody,
   ModalHeader,
+  OverlayTrigger,
+  Popover,
   Row,
   Table,
 } from "react-bootstrap";
@@ -200,6 +202,30 @@ const Home = () => {
   const { data: expiredCertificates } = useExpiredCertificates(user.id);
   const { data: nearExpiryCertificates } = useNearExpiryCertificates(user.id);
 
+  const downloadCertFile = (str: string, filename: string) => {
+    const url = window.URL.createObjectURL(new Blob([str]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `${filename}.pem`);
+    document.body.appendChild(link);
+    link.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const [password, setPassword] = useState("");
+  const downloadPrivateKeyPopover = (
+    <Popover id="popover-basic">
+      <Popover.Header as="h3">Enter Account Password</Popover.Header>
+      <Popover.Body>
+        <Form.Control
+          type="password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </Popover.Body>
+      <Button className="mx-3 mb-3">Submit</Button>
+    </Popover>
+  );
+
   return (
     <div>
       <Insights
@@ -275,8 +301,34 @@ const Home = () => {
         size="xl"
         show={openViewCertificateModal}
         onHide={toggleViewCertificateModal}
+        enforceFocus={false}
       >
-        <ModalHeader>View Certificate</ModalHeader>
+        <ModalHeader className="d-flex justify-content-between">
+          <span>View Certificate</span>
+          <div>
+            <Button
+              className="mx-3"
+              onClick={() =>
+                downloadCertFile(
+                  viewCertificate.certificate ?? "",
+                  viewCertificate.email ?? "download"
+                )
+              }
+            >
+              <FaDownload /> Certificate
+            </Button>
+            <OverlayTrigger
+              trigger="click"
+              placement="bottom"
+              overlay={downloadPrivateKeyPopover}
+              rootClose={true}
+            >
+              <Button>
+                <FaDownload /> Private Key
+              </Button>
+            </OverlayTrigger>
+          </div>
+        </ModalHeader>
         <ModalBody>
           <Row>
             <Col>
