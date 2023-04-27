@@ -196,7 +196,7 @@ const Home = () => {
         },
       },
     ],
-    []
+    [downloadCertificate, renewCertiticate]
   );
 
   const user = getLocalStorageData("user");
