@@ -10,6 +10,7 @@ import {
   postDownloadPrivateKey,
   postGenerateCsr,
   postRenewCertificate,
+  postSignCsr,
 } from "services/certificate.services";
 
 export const useAllCertificates = (userId: string) =>
@@ -107,6 +108,18 @@ export const useDownloadPrivateKey = () => {
       document.body.appendChild(link);
       link.click();
       window.URL.revokeObjectURL(url);
+    },
+  });
+};
+
+export const useSignCsr = () => {
+  const queryClient = useQueryClient();
+  return useMutation(postSignCsr, {
+    onSuccess: (res: any) => {
+      toast.success(res.message);
+      queryClient.invalidateQueries(["allCertificates"]);
+      queryClient.invalidateQueries(["expiredCertificates"]);
+      queryClient.invalidateQueries(["nearExpiryCertificates"]);
     },
   });
 };

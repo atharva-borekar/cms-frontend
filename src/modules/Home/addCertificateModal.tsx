@@ -1,12 +1,6 @@
 import { useAddCertificate } from "customHooks/certificate.hooks";
-import { HTMLInputTypeAttribute, useState } from "react";
-import {
-  Button,
-  FloatingLabel,
-  Form,
-  FormControlProps,
-  FormGroup,
-} from "react-bootstrap";
+import { useState } from "react";
+import { Button, FloatingLabel, Form } from "react-bootstrap";
 import { getLocalStorageData } from "utils/loalStorageUtils";
 
 const AddCertificateModal = () => {

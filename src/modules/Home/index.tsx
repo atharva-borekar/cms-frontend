@@ -23,6 +23,7 @@ import {
   useExpiredCertificates,
   useNearExpiryCertificates,
   useRenewCertificate,
+  useSignCsr,
 } from "customHooks/certificate.hooks";
 import moment from "moment";
 import AddCertificateModal from "./addCertificateModal";
@@ -82,6 +83,7 @@ const Home = () => {
 
   const { mutate: downloadCertificate } = useDownloadCertificate();
   const { mutate: renewCertiticate } = useRenewCertificate();
+  const { mutate: signCsr } = useSignCsr();
 
   const columns = useMemo(
     () => [
@@ -181,7 +183,10 @@ const Home = () => {
                   className="mx-3"
                   size="sm"
                   onClick={() => {
-                    window.alert(`Sign Certificate ${val?.data?.id}`);
+                    const postSignCsrPayload = {
+                      certificate: val?.data?.certificate,
+                    };
+                    signCsr({ postSignCsrPayload });
                   }}
                   title="Sign CSR"
                 >
@@ -195,7 +200,7 @@ const Home = () => {
         },
       },
     ],
-    [downloadCertificate, renewCertiticate]
+    [downloadCertificate, renewCertiticate, signCsr]
   );
 
   const user = getLocalStorageData("user");

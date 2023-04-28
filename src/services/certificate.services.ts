@@ -83,3 +83,11 @@ export const postDownloadPrivateKey = ({
     API_ROUTES.postDownloadPrivateKey(userId, certificateId),
     postDownloadPrivateKeyPayload
   );
+
+export const postSignCsr = ({
+  postSignCsrPayload,
+}: {
+  postSignCsrPayload: {
+    certificate: string;
+  };
+}) => postApi(API_ROUTES.SIGN_CSR, postSignCsrPayload);

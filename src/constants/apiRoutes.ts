@@ -19,4 +19,6 @@ export const API_ROUTES = {
 
   postDownloadPrivateKey: (userId: string, certificateId: string | number) =>
     `/users/${userId}/download_private_key/${certificateId}`,
+
+  SIGN_CSR: "/sign_csr",
 };
