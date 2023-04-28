@@ -120,7 +120,9 @@ const CSRForm = (props: ICSRFormProps) => {
         error={errors.email}
       />
       <hr />
-      <Button onClick={() => handleSubmit()}>Create CSR</Button>
+      <Button onClick={() => handleSubmit()}>
+        Create {isCsr ? "CSR" : "Certificate"}
+      </Button>
     </>
   );
 };
