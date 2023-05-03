@@ -7,6 +7,7 @@ interface IFormFieldProps {
   placeholder?: string;
   isInvalid?: boolean;
   error?: string;
+  disabled?: boolean;
 }
 
 const CustomFormField = ({
@@ -16,6 +17,7 @@ const CustomFormField = ({
   isInvalid,
   error,
   placeholder,
+  disabled,
 }: IFormFieldProps) => {
   return (
     <Form.Group as={Row} className="mb-3">
@@ -25,6 +27,7 @@ const CustomFormField = ({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          disabled={disabled}
           isInvalid={isInvalid}
         />
         <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>

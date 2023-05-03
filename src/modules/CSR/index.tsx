@@ -69,6 +69,7 @@ const CSRForm = (props: ICSRFormProps) => {
         value={values.country}
         onChange={(e) => handleValueChange(e, "country")}
         isInvalid={Boolean(errors.country)}
+        disabled={true}
         error={errors.country}
       />
       <CustomFormField
@@ -77,6 +78,7 @@ const CSRForm = (props: ICSRFormProps) => {
         value={values.state}
         onChange={(e) => handleValueChange(e, "state")}
         isInvalid={Boolean(errors.state)}
+        disabled={true}
         error={errors.state}
       />
       <CustomFormField
@@ -85,6 +87,7 @@ const CSRForm = (props: ICSRFormProps) => {
         value={values.locality}
         onChange={(e) => handleValueChange(e, "locality")}
         isInvalid={Boolean(errors.locality)}
+        disabled={true}
         error={errors.locality}
       />
       <CustomFormField
@@ -93,6 +96,7 @@ const CSRForm = (props: ICSRFormProps) => {
         value={values.organization_name}
         onChange={(e) => handleValueChange(e, "organization_name")}
         isInvalid={Boolean(errors.organization_name)}
+        disabled={true}
         error={errors.organization_name}
       />
       <CustomFormField
